@@ -8,7 +8,7 @@ import com.prisma.deploy.connector.DeployConnector
 import com.prisma.deploy.connector.mysql.MySqlDeployConnector
 import com.prisma.deploy.migration.validation.SchemaError
 import com.prisma.deploy.schema.mutations.{FunctionInput, FunctionValidator}
-import com.prisma.deploy.server.auth.DummyClusterAuth
+import com.prisma.deploy.server.auth.DummyManagementAuth
 import com.prisma.errors.{BugsnagErrorReporter, ErrorReporter}
 import com.prisma.messagebus.pubsub.inmemory.InMemoryAkkaPubSub
 import com.prisma.shared.models.Project
@@ -18,7 +18,7 @@ case class DeployTestDependencies()(implicit val system: ActorSystem, val materi
 
   implicit val reporter: ErrorReporter    = BugsnagErrorReporter(sys.env.getOrElse("BUGSNAG_API_KEY", ""))
   override lazy val migrator              = TestMigrator(migrationPersistence, deployPersistencePlugin.deployMutactionExecutor)
-  override lazy val clusterAuth           = DummyClusterAuth()
+  override lazy val managementAuth        = DummyManagementAuth()
   override lazy val invalidationPublisher = InMemoryAkkaPubSub[String]()
 
   override def apiAuth = AuthImpl

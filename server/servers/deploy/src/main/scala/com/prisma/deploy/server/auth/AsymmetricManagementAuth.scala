@@ -7,9 +7,9 @@ import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
 
-case class SymmetricClusterAuth(jwtSecret: String) extends ClusterAuth {
+case class AsymmetricManagementAuth(publicKey: String) extends ManagementAuth {
   import pdi.jwt.{Jwt, JwtAlgorithm, JwtOptions}
-  import ClusterAuth._
+  import ManagementAuth._
 
   override def verify(name: String, stage: String, authHeaderOpt: Option[String]): Try[Unit] = Try {
     authHeaderOpt match {
@@ -18,10 +18,10 @@ case class SymmetricClusterAuth(jwtSecret: String) extends ClusterAuth {
 
       case Some(authHeader) =>
         val jwtOptions = JwtOptions(signature = true, expiration = true)
-        val algorithms = Seq(JwtAlgorithm.HS256)
+        val algorithms = Seq(JwtAlgorithm.RS256)
         val decodedToken = Jwt.decodeRaw(
           token = authHeader.stripPrefix("Bearer "),
-          key = jwtSecret,
+          key = publicKey,
           algorithms = algorithms,
           options = jwtOptions
         )

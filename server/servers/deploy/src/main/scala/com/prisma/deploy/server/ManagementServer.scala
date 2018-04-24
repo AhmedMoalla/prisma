@@ -29,7 +29,7 @@ import scala.concurrent.Future
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
-case class ClusterServer(prefix: String = "")(
+case class ManagementServer(prefix: String = "")(
     implicit system: ActorSystem,
     materializer: ActorMaterializer,
     dependencies: DeployDependencies
@@ -39,7 +39,7 @@ case class ClusterServer(prefix: String = "")(
   import com.prisma.deploy.server.JsonMarshalling._
   import system.dispatcher
 
-  val schemaBuilder: SchemaBuilder           = dependencies.clusterSchemaBuilder
+  val schemaBuilder: SchemaBuilder           = dependencies.managementSchemaBuilder
   val projectPersistence: ProjectPersistence = dependencies.projectPersistence
   val log: String => Unit                    = (msg: String) => logger.info(msg)
   val requestPrefix                          = sys.env.getOrElse("ENV", "local")

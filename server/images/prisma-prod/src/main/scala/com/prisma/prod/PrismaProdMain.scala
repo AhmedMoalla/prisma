@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.prisma.akkautil.http.ServerExecutor
 import com.prisma.api.server.ApiServer
-import com.prisma.deploy.server.ClusterServer
+import com.prisma.deploy.server.ManagementServer
 import com.prisma.subscriptions.SimpleSubscriptionsServer
 import com.prisma.utils.boolean.BooleanUtils._
 import com.prisma.websocket.WebsocketServer
@@ -16,13 +16,13 @@ object PrismaProdMain extends App {
   implicit val dependencies = PrismaProdDependencies()
   dependencies.initialize()(system.dispatcher)
 
-  val port                 = sys.env.getOrElse("PORT", "9000").toInt
-  val includeClusterServer = sys.env.get("CLUSTER_API_ENABLED").contains("1")
+  val port              = sys.env.getOrElse("PORT", "9000").toInt
+  val includeMgmtServer = sys.env.get("CLUSTER_API_ENABLED").contains("1")
 
-  val word = if (includeClusterServer) "with" else "without"
-  println(s"Will start $word cluster server")
+  val word = if (includeMgmtServer) "with" else "without"
+  println(s"Will start $word management server")
 
-  val servers = includeClusterServer.toOption(ClusterServer("cluster")) ++ List(
+  val servers = includeMgmtServer.toOption(ManagementServer("management")) ++ List(
     WebsocketServer(dependencies),
     ApiServer(dependencies.apiSchemaBuilder),
     SimpleSubscriptionsServer(),
