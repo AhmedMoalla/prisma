@@ -14,15 +14,12 @@ object PrismaProdMain extends App {
   implicit val system       = ActorSystem("single-server")
   implicit val materializer = ActorMaterializer()
   implicit val dependencies = PrismaProdDependencies()
+
   dependencies.initialize()(system.dispatcher)
 
-  val port              = sys.env.getOrElse("PORT", "9000").toInt
-  val includeMgmtServer = sys.env.get("CLUSTER_API_ENABLED").contains("1")
-
-  val word = if (includeMgmtServer) "with" else "without"
-  println(s"Will start $word management server")
-
-  val servers = includeMgmtServer.toOption(ManagementServer("management")) ++ List(
+  val port                 = dependencies.config.port.getOrElse(4466)
+  val includeClusterServer = dependencies.config.managmentApiEnabled
+  val servers = includeClusterServer.flatMap(_.toOption(ManagementServer("management", dependencies.config.server2serverSecret))) ++ List(
     WebsocketServer(dependencies),
     ApiServer(dependencies.apiSchemaBuilder),
     SimpleSubscriptionsServer(),

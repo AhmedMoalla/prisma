@@ -1,10 +1,8 @@
 package com.prisma.deploy.server.auth
 
 import java.time.Instant
-
 import com.prisma.deploy.schema.{InvalidToken, TokenExpired}
 import play.api.libs.json._
-
 import scala.util.{Failure, Success, Try}
 
 case class AsymmetricManagementAuth(publicKey: String) extends ManagementAuth {
