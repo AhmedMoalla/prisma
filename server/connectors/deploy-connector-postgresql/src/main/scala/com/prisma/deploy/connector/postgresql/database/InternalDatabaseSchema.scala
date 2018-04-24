@@ -4,6 +4,8 @@ import slick.jdbc.PostgresProfile.api._
 
 object InternalDatabaseSchema {
 
+  // todo migration concept from older versions
+
   def createSchemaActions(recreate: Boolean): DBIOAction[Unit, NoStream, Effect] = {
     if (recreate) {
       DBIO.seq(dropAction, setupActions)
@@ -12,10 +14,10 @@ object InternalDatabaseSchema {
     }
   }
 
-  lazy val dropAction = DBIO.seq(sqlu"""DROP SCHEMA IF EXISTS "graphcool";""")
+  lazy val dropAction = DBIO.seq(sqlu"""DROP SCHEMA IF EXISTS "prisma";""")
 
   lazy val setupActions = DBIO.seq(
-    sqlu"""CREATE SCHEMA IF NOT EXISTS "graphcool";""",
+    sqlu"""CREATE SCHEMA IF NOT EXISTS "prisma";""",
     // Project
     sqlu"""
       CREATE TABLE IF NOT EXISTS "Project" (
